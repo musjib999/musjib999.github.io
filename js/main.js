@@ -94,3 +94,7 @@
     });
 })(jQuery);
 
+function sendEmail() {
+    console.log(document.getElementById('email').value);
+    return `mailto:musjib999@gmail.com?cc=d${document.getElementById('email').value}, subject=Hello`
+}
