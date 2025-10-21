@@ -17,10 +17,13 @@
     new WOW().init();
 
 
-    // Facts counter
+    // Facts counter with comma formatting
     $('[data-toggle="counter-up"]').counterUp({
         delay: 10,
-        time: 2000
+        time: 2000,
+        formatter: function (n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     });
 
 
@@ -62,11 +65,24 @@
         itemSelector: '.portfolio-item',
         layoutMode: 'fitRows'
     });
+    
     $('#portfolio-flters li').on('click', function () {
         $("#portfolio-flters li").removeClass('active');
         $(this).addClass('active');
 
-        portfolioIsotope.isotope({ filter: $(this).data('filter') });
+        var filterValue = $(this).text().toLowerCase();
+        
+        if (filterValue.includes('all')) {
+            portfolioIsotope.isotope({ filter: '*' });
+        } else if (filterValue.includes('enterprise')) {
+            portfolioIsotope.isotope({ filter: '.portfolio-item[data-category="enterprise"]' });
+        } else if (filterValue.includes('mobile')) {
+            portfolioIsotope.isotope({ filter: '.portfolio-item[data-category="mobile"]' });
+        } else if (filterValue.includes('web')) {
+            portfolioIsotope.isotope({ filter: '.portfolio-item[data-category="web"]' });
+        } else {
+            portfolioIsotope.isotope({ filter: '*' });
+        }
     });
 
 
@@ -93,6 +109,35 @@
         return false;
     });
 })(jQuery);
+
+// Contact form submission
+$('#contactForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const name = $('#name').val();
+    const email = $('#email').val();
+    const subject = $('#subject').val();
+    const message = $('#message').val();
+    
+    // Validate form
+    if (!name || !email || !subject || !message) {
+        alert('Please fill in all fields.');
+        return;
+    }
+    
+    // Create mailto link with form data
+    const mailtoLink = `mailto:musjib999@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`)}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    // Show success message
+    alert('Your email client should open with the message. If not, please email musjib999@gmail.com directly.');
+    
+    // Reset form
+    this.reset();
+});
 
 function sendEmail() {
     console.log(document.getElementById('email').value);
